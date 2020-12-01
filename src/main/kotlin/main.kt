@@ -3,9 +3,9 @@ import kotlin.math.*
 
 fun main() {
     val triangle = Triangle(4.0, 3.0, 5.0)
-    println("a: ${Triangle("alpha", 54.13, "a", 4.0)}")
-    println("b: ${Triangle("alpha", 54.13, "b", 3.0)}")
-    println("c: ${Triangle("alpha", 54.13, "c", 5.0)}")
+    println("a: ${Triangle("alpha", 53.13, "a", 4.0)}")
+    println("b: ${Triangle("alpha", 53.13, "b", 3.0)}")
+    println("c: ${Triangle("alpha", 53.13, "c", 5.0)}")
     println(triangle)
 }
 
@@ -27,7 +27,7 @@ class Triangle() {
         val angle = angleD.toRadians() //thanks kotlin
         if (angleName == "alpha") {
             alpha = Angle(angleD, "alpha")
-            when(sideName){
+            when (sideName) {
                 "a" -> {
                     a = Side(side, "a");
                     c = Side(a / sin(angle), "c")
@@ -35,17 +35,17 @@ class Triangle() {
                 }
                 "b" -> {
                     b = Side(side, "b")
-                    c = Side(side / cos(angle), "c")
-                    a = Side(c * cos(angle), "c")
-                    TODO("fix error on side c (also wrong name")
+                    c = Side(b / cos(angle), "c")
+                    a = Side(c * sin(angle), "a")
                 }
                 "c" -> {
                     c = Side(side, "c")
                     a = Side(c * sin(angle), "a")
+                    b = Side(c * cos(angle), "a")
                 }
             }
         } else if (angleName == "beta") {
-            when(sideName){
+            when (sideName) {
                 "a" -> {
                     //cos
                 }
