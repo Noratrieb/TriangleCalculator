@@ -3,10 +3,14 @@ import kotlin.math.*
 
 fun main() {
     val triangle = Triangle(4.0, 3.0, 5.0)
-    println("a: ${Triangle("alpha", 53.13, "a", 4.0)}")
-    println("b: ${Triangle("alpha", 53.13, "b", 3.0)}")
-    println("c: ${Triangle("alpha", 53.13, "c", 5.0)}")
-    println(triangle)
+    println("alpha: a: ${Triangle("alpha", 53.13, "a", 4.0)}")
+    println("alpha: b: ${Triangle("alpha", 53.13, "b", 3.0)}")
+    println("alpha: c: ${Triangle("alpha", 53.13, "c", 5.0)}")
+
+    println("beta:  a: ${Triangle("beta", 36.87, "a", 4.0)}")
+    println("beta:  b: ${Triangle("beta", 36.87, "b", 3.0)}")
+    println("beta:  c: ${Triangle("beta", 36.87, "c", 5.0)}")
+    println("\nOriginal$triangle")
 }
 
 class Triangle() {
@@ -15,9 +19,9 @@ class Triangle() {
     var b = Side(0.0, "b")
     var c = Side(0.0, "c")
 
-    var alpha = Angle(0.0, "")
-    var beta = Angle(0.0, "")
-    var gamma = Angle(0.0, "")
+    var alpha = Angle(0.0, "alpha")
+    var beta = Angle(0.0, "beta")
+    var gamma = Angle(90.0, "gamma")
 
     init {
 
@@ -25,39 +29,51 @@ class Triangle() {
 
     constructor(angleName: String, angleD: Double, sideName: String, side: Double) : this() {
         val angle = angleD.toRadians() //thanks kotlin
-        if (angleName == "alpha") {
-            alpha = Angle(angleD, "alpha")
-            when (sideName) {
-                "a" -> {
-                    a = Side(side, "a");
-                    c = Side(a / sin(angle), "c")
-                    b = Side(c * cos(angle), "b")
+        when (angleName) {
+            "alpha" -> {
+                alpha = Angle(angleD, "alpha")
+                when (sideName) {
+                    "a" -> {
+                        a = Side(side, "a");
+                        c = Side(a / sin(angle), "c")
+                        b = Side(c * cos(angle), "b")
+                    }
+                    "b" -> {
+                        b = Side(side, "b")
+                        c = Side(b / cos(angle), "c")
+                        a = Side(c * sin(angle), "a")
+                    }
+                    "c" -> {
+                        c = Side(side, "c")
+                        a = Side(c * sin(angle), "a")
+                        b = Side(c * cos(angle), "a")
+                    }
                 }
-                "b" -> {
-                    b = Side(side, "b")
-                    c = Side(b / cos(angle), "c")
-                    a = Side(c * sin(angle), "a")
-                }
-                "c" -> {
-                    c = Side(side, "c")
-                    a = Side(c * sin(angle), "a")
-                    b = Side(c * cos(angle), "a")
+                beta = Angle(asin(b.length / c.length).toDegree(), "beta")
+            }
+            "beta" -> {
+                beta = Angle(angleD, "beta")
+                when (sideName) {
+                    "a" -> {
+                        a = Side(side, "a");
+                        c = Side(a / cos(angle), "c")
+                        b = Side(c * sin(angle), "b")
+                    }
+                    "b" -> {
+                        b = Side(side, "b")
+                        c = Side(b / sin(angle), "c")
+                        a = Side(c * cos(angle), "a")
+                    }
+                    "c" -> {
+                        c = Side(side, "c")
+                        a = Side(c * cos(angle), "a")
+                        b = Side(c * sin(angle), "a")
+                    }
                 }
             }
-        } else if (angleName == "beta") {
-            when (sideName) {
-                "a" -> {
-                    //cos
-                }
-                "b" -> {
-                    //sin
-                }
-                "c" -> {
-                    //cos
-                }
+            else -> {
+                throw IllegalArgumentException("$angleName is not a valid angle")
             }
-        } else {
-            throw IllegalArgumentException("$angleName is not a valid angle")
         }
     }
 
