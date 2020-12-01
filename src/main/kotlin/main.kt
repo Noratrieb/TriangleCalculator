@@ -1,5 +1,5 @@
-import java.lang.IllegalArgumentException
 import kotlin.math.*
+import kotlin.reflect.KFunction
 
 fun main() {
     val triangle = Triangle(4.0, 3.0, 5.0)
@@ -29,52 +29,19 @@ class Triangle() {
 
     constructor(angleName: String, angleD: Double, sideName: String, side: Double) : this() {
         val angle = angleD.toRadians() //thanks kotlin
+
         when (angleName) {
             "alpha" -> {
-                alpha = Angle(angleD, "alpha")
-                when (sideName) {
-                    "a" -> {
-                        a = Side(side, "a");
-                        c = Side(a / sin(angle), "c")
-                        b = Side(c * cos(angle), "b")
-                    }
-                    "b" -> {
-                        b = Side(side, "b")
-                        c = Side(b / cos(angle), "c")
-                        a = Side(c * sin(angle), "a")
-                    }
-                    "c" -> {
-                        c = Side(side, "c")
-                        a = Side(c * sin(angle), "a")
-                        b = Side(c * cos(angle), "a")
-                    }
-                }
-                beta = Angle(asin(b.length / c.length).toDegree(), "beta")
+                assignSides(::sin, ::cos, angle, sideName, side)
             }
             "beta" -> {
-                beta = Angle(angleD, "beta")
-                when (sideName) {
-                    "a" -> {
-                        a = Side(side, "a");
-                        c = Side(a / cos(angle), "c")
-                        b = Side(c * sin(angle), "b")
-                    }
-                    "b" -> {
-                        b = Side(side, "b")
-                        c = Side(b / sin(angle), "c")
-                        a = Side(c * cos(angle), "a")
-                    }
-                    "c" -> {
-                        c = Side(side, "c")
-                        a = Side(c * cos(angle), "a")
-                        b = Side(c * sin(angle), "a")
-                    }
-                }
+                assignSides(::cos, ::sin, angle, sideName, side)
             }
             else -> {
-                throw IllegalArgumentException("$angleName is not a valid angle")
+                throw IllegalArgumentException("Illegal angle $angle")
             }
         }
+        calculateAngles()
     }
 
     constructor(vararg sides: Double) : this() {
@@ -84,6 +51,25 @@ class Triangle() {
         calculateAngles()
     }
 
+    private fun assignSides(func1: (Double) -> Double, func2: (Double) -> Double, angle: Double, sideName: String, side: Double){
+        when (sideName) {
+            "a" -> {
+                a = Side(side, "a");
+                c = Side(a / func1(angle), "c")
+                b = Side(c * func2(angle), "b")
+            }
+            "b" -> {
+                b = Side(side, "b")
+                c = Side(b / func2(angle), "c")
+                a = Side(c * func1(angle), "a")
+            }
+            "c" -> {
+                c = Side(side, "c")
+                a = Side(c * func1(angle), "a")
+                b = Side(c * func2(angle), "a")
+            }
+        }
+    }
 
     private fun calculateAngles() {
         alpha = Angle(asin(a.length / c.length).toDegree(), "alpha")
@@ -96,7 +82,7 @@ class Triangle() {
 
 
     override fun toString(): String {
-        return "Seiten: $a, $b, $c   Winkel: $alpha $beta $gamma"
+        return "Sides: $a, $b, $c   Angles: $alpha $beta $gamma"
     }
 
 }
