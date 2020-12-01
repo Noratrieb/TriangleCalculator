@@ -1,9 +1,11 @@
 import java.lang.IllegalArgumentException
-import kotlin.contracts.contract
 import kotlin.math.*
 
 fun main() {
-    val triangle = Triangle(7.7, 4.3, 8.7)
+    val triangle = Triangle(4.0, 3.0, 5.0)
+    println("a: ${Triangle("alpha", 54.13, "a", 4.0)}")
+    println("b: ${Triangle("alpha", 54.13, "b", 3.0)}")
+    println("c: ${Triangle("alpha", 54.13, "c", 5.0)}")
     println(triangle)
 }
 
@@ -21,18 +23,25 @@ class Triangle() {
 
     }
 
-    constructor(angleName: String, angle: Double, sideName: String, side: Double) : this() {
+    constructor(angleName: String, angleD: Double, sideName: String, side: Double) : this() {
+        val angle = angleD.toRadians() //thanks kotlin
         if (angleName == "alpha") {
+            alpha = Angle(angleD, "alpha")
             when(sideName){
                 "a" -> {
-                    c = Side(side / sin(angle), "c")
+                    a = Side(side, "a");
+                    c = Side(a / sin(angle), "c")
                     b = Side(c * cos(angle), "b")
                 }
                 "b" -> {
-                    //c = Side
+                    b = Side(side, "b")
+                    c = Side(side / cos(angle), "c")
+                    a = Side(c * cos(angle), "c")
+                    TODO("fix error on side c (also wrong name")
                 }
                 "c" -> {
-                    //cos
+                    c = Side(side, "c")
+                    a = Side(c * sin(angle), "a")
                 }
             }
         } else if (angleName == "beta") {
@@ -67,6 +76,8 @@ class Triangle() {
     }
 
     private fun Double.toDegree() = this * 180 / PI
+    private fun Double.toRadians() = this * PI / 180
+
 
     override fun toString(): String {
         return "Seiten: $a, $b, $c   Winkel: $alpha $beta $gamma"
@@ -79,9 +90,10 @@ class Side(length: Double, name: String) {
     val name = name
 
     operator fun times(other: Double) = this.length * other
+    operator fun div(other: Double) = this.length / other
 
     override fun toString(): String {
-        return "$name = $length"
+        return "$name = ${"%.2f".format(length)}"
     }
 }
 
